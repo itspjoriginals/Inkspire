@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%- include('./partials/head') %>
+  <title>Add New Blog</title>
+</head>
+<body>
+  <%- include('./partials/navbar') %>
+
+  <div class="container mt-4">
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        <h1 class="mb-4">Add New Blog</h1>
+
+        <form action="/blog" method="post" enctype="multipart/form-data">
+          <!-- Title -->
+          <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input
+              type="text"
+              class="form-control"
+              id="title"
+              name="title"
+              placeholder="Enter a catchy title"
+              required
+            >
+          </div>
+
+          <!-- Body (textarea) -->
+          <div class="mb-3">
+            <label for="body" class="form-label">Body</label>
+            <textarea
+              class="form-control"
+              id="body"
+              name="body"
+              rows="8"
+              placeholder="Write your blog content here..."
+              required
+            ></textarea>
+          </div>
+
+          <!-- Cover image URL -->
+          <div class="mb-3">
+            <label for="coverImageURL" class="form-label">Cover Image</label>
+            <input
+              type="file"
+              class="form-control"
+              id="coverImage"
+              name="coverImage"
+              placeholder="Upload Cover Image"
+            >
+          </div>
+
+          <!-- Submit button -->
+          <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Publish Blog</button>
+            <a href="/" class="btn btn-outline-secondary ms-2">Cancel</a>
+          </div>
+        </form>
+
+        <!-- Optional success / error messages -->
+        <% if (locals.success) { %>
+          <div class="alert alert-success mt-3">
+            <%= locals.success %>
+          </div>
+        <% } %>
+        <% if (locals.error) { %>
+          <div class="alert alert-danger mt-3">
+            <%= locals.error %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <%- include('./partials/scripts') %>
+</body>
+</html>
