@@ -4,6 +4,7 @@ const multer = require('multer');
 const Blog = require('../models/blog');
 const path = require('path');
 const Comment = require('../models/comment');
+const { requireAuth } = require('../middlewares/authentication');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -17,11 +18,34 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage});
 
-router.get('/add-new', (req, res) => {
+router.get('/add-new', requireAuth, (req, res) => {
   return res.render("addBlog", {
     user: req.user,
   })
 });
+
+router.post('/', requireAuth, upload.single("coverImage"), async (req, res) => {
+  const {title, body } = req.body;
+  const blog = await Blog.create({
+    body,
+    title,
+    createdBy: req.user._id,
+    // coverImageURL: `/uploads/${req.file.filename}`
+    coverImageURL: req.file ? `/uploads/${req.file.filename}` : ""
+    })
+  return res.redirect(`/blog/${blog._id}`);
+});
+
+router.post('/comment/:blogId', requireAuth, async(req, res) => {
+    await Comment.create({
+    content: req.body.content,
+    blogId: req.params.blogId,
+    createdBy: req.user._id,
+  });
+
+  return res.redirect(`/blog/${req.params.blogId}`);
+});
+
 
 router.get('/:id', async(req, res) => {
   const blog = await Blog.findById(req.params.id).populate("createdBy", "fullName profileImageURL");
@@ -33,24 +57,5 @@ router.get('/:id', async(req, res) => {
   });
 });
 
-router.post('/comment/:blogId', async(req, res) => {
-    await Comment.create({
-    content: req.body.content,
-    blogId: req.params.blogId,
-    createdBy: req.user._id,
-  });
-
-  return res.redirect(`/blog/${req.params.blogId}`);
-});
-
-router.post('/', upload.single ("coverImage"), async (req, res) => {
-  const {title, body } = req.body;
-  const blog = await Blog.create({
-    body,
-    title,
-    createdBy: req.user._id,
-    coverImageURL: `/uploads/${req.file.filename}`})
-  return res.redirect(`/blog/${blog._id}`);
-});
 
 module.exports = router;

@@ -3,7 +3,7 @@ const {Schema, model} = require('mongoose');
 const commentSchema = new Schema({
   content: {
     type: String,
-    require: true,
+    required: true,
   },
   blogId : {
     type: Schema.Types.ObjectId,

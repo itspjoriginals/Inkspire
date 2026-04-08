@@ -4,77 +4,143 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <%- include('./partials/head') %>
-  <title>Add New Blog</title>
+  <title>Write a Story — TechThreads</title>
 </head>
 <body>
+
   <%- include('./partials/navbar') %>
 
-  <div class="container mt-4">
+  <div class="container mt-5 pb-5">
     <div class="row justify-content-center">
-      <div class="col-md-8">
-        <h1 class="mb-4">Add New Blog</h1>
+      <div class="col-lg-8">
 
+        <!-- Page Header -->
+        <div class="fade-up mb-4" style="border-bottom: 1px solid var(--border); padding-bottom: 1.5rem;">
+          <span class="section-eyebrow">New Story</span>
+          <h1 style="font-family:'Playfair Display',serif; font-size:2.6rem; font-weight:900; font-style:italic; margin:0.2rem 0 0;">
+            What's on your mind?
+          </h1>
+        </div>
+
+        <!-- Alerts -->
+        <% if (locals.error) { %>
+          <div class="alert alert-danger fade-up mb-4"><%= locals.error %></div>
+        <% } %>
+        <% if (locals.success) { %>
+          <div class="alert alert-success fade-up mb-4"><%= locals.success %></div>
+        <% } %>
+
+        <!-- Form -->
         <form action="/blog" method="post" enctype="multipart/form-data">
-          <!-- Title -->
-          <div class="mb-3">
+
+          <div class="mb-4 fade-up fade-up-delay-1">
             <label for="title" class="form-label">Title</label>
             <input
               type="text"
               class="form-control"
               id="title"
               name="title"
-              placeholder="Enter a catchy title"
+              placeholder="Write a compelling headline…"
               required
+              style="font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:600;"
             >
           </div>
 
-          <!-- Body (textarea) -->
-          <div class="mb-3">
+          <div class="mb-4 fade-up fade-up-delay-2">
             <label for="body" class="form-label">Body</label>
             <textarea
               class="form-control"
               id="body"
               name="body"
-              rows="8"
-              placeholder="Write your blog content here..."
+              rows="12"
+              placeholder="Start writing your story here…"
               required
+              style="line-height:1.8; min-height:280px;"
             ></textarea>
+            <div style="font-family:'DM Mono',monospace; font-size:0.65rem; color:var(--ink-muted); letter-spacing:0.06em; text-transform:uppercase; margin-top:0.4rem;" id="char-count">0 characters</div>
           </div>
 
-          <!-- Cover image URL -->
-          <div class="mb-3">
-            <label for="coverImageURL" class="form-label">Cover Image</label>
-            <input
-              type="file"
-              class="form-control"
-              id="coverImage"
-              name="coverImage"
-              placeholder="Upload Cover Image"
-            >
+          <div class="mb-5 fade-up fade-up-delay-3">
+            <label for="coverImage" class="form-label">Cover Image</label>
+            <div class="cover-upload-area" id="uploadArea">
+              <input
+                type="file"
+                class="form-control"
+                id="coverImage"
+                name="coverImage"
+                accept="image/*"
+                style="opacity:0; position:absolute; inset:0; cursor:pointer; z-index:2;"
+                onchange="previewImage(this)"
+              >
+              <div id="uploadPlaceholder" style="text-align:center; padding:2.5rem 1rem; pointer-events:none;">
+                <div style="font-size:2rem; color:var(--gold); margin-bottom:0.5rem;">⊕</div>
+                <div style="font-size:0.85rem; color:var(--ink-muted);">Click or drag to upload a cover image</div>
+                <div style="font-size:0.72rem; color:var(--ink-muted); margin-top:0.25rem; font-family:'DM Mono',monospace; text-transform:uppercase; letter-spacing:0.06em;">JPG, PNG, WebP</div>
+              </div>
+              <img id="coverPreview" src="" style="display:none; width:100%; max-height:280px; object-fit:cover; border-radius:4px; pointer-events:none;" alt="Cover preview">
+            </div>
           </div>
 
-          <!-- Submit button -->
-          <div class="mb-3">
-            <button type="submit" class="btn btn-primary">Publish Blog</button>
-            <a href="/" class="btn btn-outline-secondary ms-2">Cancel</a>
+          <div class="d-flex gap-3 fade-up">
+            <button type="submit" class="btn btn-write">Publish Story ✦</button>
+            <a href="/" class="btn btn-outline-secondary">Discard</a>
           </div>
+
         </form>
 
-        <!-- Optional success / error messages -->
-        <% if (locals.success) { %>
-          <div class="alert alert-success mt-3">
-            <%= locals.success %>
-          </div>
-        <% } %>
-        <% if (locals.error) { %>
-          <div class="alert alert-danger mt-3">
-            <%= locals.error %>
-          </div>
-        <% } %>
       </div>
     </div>
   </div>
 
+  <footer class="page-footer">
+    <div class="container">
+      <span>© <%= new Date().getFullYear() %> TechThreads</span>
+    </div>
+  </footer>
+
   <%- include('./partials/scripts') %>
+
+  <style>
+    .cover-upload-area {
+      position: relative;
+      border: 1.5px dashed var(--border);
+      border-radius: 8px;
+      background: var(--cream-dark);
+      transition: border-color 0.2s ease, background 0.2s ease;
+      overflow: hidden;
+    }
+
+    .cover-upload-area:hover {
+      border-color: var(--gold);
+      background: #fdf8f0;
+    }
+  </style>
+
+  <script>
+    // Character count
+    const bodyEl = document.getElementById('body');
+    const countEl = document.getElementById('char-count');
+    if (bodyEl && countEl) {
+      bodyEl.addEventListener('input', () => {
+        const n = bodyEl.value.length;
+        countEl.textContent = n.toLocaleString() + ' character' + (n !== 1 ? 's' : '');
+      });
+    }
+
+    // Image preview
+    function previewImage(input) {
+      const preview = document.getElementById('coverPreview');
+      const placeholder = document.getElementById('uploadPlaceholder');
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          preview.src = e.target.result;
+          preview.style.display = 'block';
+          placeholder.style.display = 'none';
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+  </script>
 </body>
 </html>

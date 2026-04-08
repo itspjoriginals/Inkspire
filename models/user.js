@@ -33,15 +33,17 @@ const userSchema = mongoose.Schema({
 
 userSchema.pre("save", function (next) {
   const user = this;
-  if (!user.isModified("password")) return;
+  if (!user.isModified("password")) return next(); // FIX
 
-  const salt = randomBytes(16).toString();
+  const salt = randomBytes(16).toString("hex");
   const hashedPassword = createHmac("sha256", salt)
     .update(user.password)
     .digest("hex");
 
-  this.salt = salt;
-  this.password = hashedPassword;
+  user.salt = salt;
+  user.password = hashedPassword;
+
+  next(); // FIX
 });
 
 userSchema.static("matchPasswordAndGenerateToken", async function (email, password) {
@@ -57,7 +59,7 @@ userSchema.static("matchPasswordAndGenerateToken", async function (email, passwo
 
   if (hashedPassword !== userProvidedHash) throw new Error('Incorrect Password!');
 
-  return token = createTokenForUser(user);
+  return createTokenForUser(user);
 });
 
 const User = mongoose.model('user', userSchema);

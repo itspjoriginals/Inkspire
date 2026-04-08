@@ -1,5 +1,10 @@
 const { validateToken } = require("../services/authentication");
 
+const requireAuth = (req, res, next) => {
+  if (!req.user) return res.redirect("/user/signin");
+  next();
+};
+
 const checkForAuthenticationCookie = (cookieName) => {
   return (req, res, next) => {
     const tokenCookieValue = req.cookies[cookieName];
@@ -20,4 +25,5 @@ const checkForAuthenticationCookie = (cookieName) => {
 
 module.exports = {
   checkForAuthenticationCookie,
+  requireAuth,
 }

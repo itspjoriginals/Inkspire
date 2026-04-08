@@ -1,28 +1,93 @@
-<div class="container mt-4">
-  <h1 class="mb-4">All Blogs</h1>
-  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    <% blogs.forEach(blog => { %>
-      <div class="col">
-        <div class="card h-100 shadow-sm">
-          <% if (blog.coverImageURL) { %>
-            <img src="<%= blog.coverImageURL %>" class="card-img-top" alt="<%= blog.title %>" style="height: 200px; object-fit: fit;">
-          <% } else { %>
-            <div class="card-img-top bg-light d-flex justify-content-center align-items-center" style="height: 200px;">
-              <span class="text-muted">No image</span>
+<div class="container mt-5 pb-5">
+
+  <!-- Section Header -->
+  <div class="fade-up mb-5" style="border-bottom: 1px solid var(--border); padding-bottom: 1.5rem;">
+    <span class="section-eyebrow">Latest Stories</span>
+    <h2 style="font-family:'Playfair Display',serif; font-size:2.4rem; font-weight:900; margin:0; letter-spacing:-0.02em;">
+      From the Desk of Technologists
+    </h2>
+  </div>
+
+  <!-- Blog Grid -->
+  <div class="row g-4">
+    <% blogs.forEach((blog, index) => { %>
+
+      <div class="col-12 fade-up fade-up-delay-<%= Math.min(index + 1, 3) %>">
+        <div class="blog-card">
+          <div class="row g-0 align-items-center">
+
+            <!-- Text -->
+            <div class="<%= blog.coverImageURL ? 'col-md-8' : 'col-12' %>">
+              <div class="blog-card-inner">
+
+                <div class="blog-card-meta mb-2">
+                  <span class="dot"></span>
+                  <span><%= new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %></span>
+                  <% if (blog.createdBy && blog.createdBy.fullName) { %>
+                    <span class="dot"></span>
+                    <span><%= blog.createdBy.fullName %></span>
+                  <% } %>
+                </div>
+
+                <h5 class="blog-card-title mb-2">
+                  <a href="/blog/<%= blog._id %>" class="blog-card-title">
+                    <%= blog.title %>
+                  </a>
+                </h5>
+
+                <p class="blog-card-excerpt">
+                  <%= blog.body.substring(0, 150) %>…
+                </p>
+
+                <a href="/blog/<%= blog._id %>" class="read-more-link">
+                  Read story
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:4px; vertical-align:middle; transition: transform 0.2s ease;">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </a>
+
+              </div>
             </div>
-          <% } %>
-          <div class="card-body">
-            <h5 class="card-title"><%= blog.title %></h5>
-            <p class="card-text">
-              <%= blog.body.substring(0, 150) %>
-              <% if (blog.body.length > 150) { %>...<% } %>
-            </p>
-            <% if (locals.user) { %>
-              <a href="/blog/<%= blog._id %>" class="btn btn-primary btn-sm">Read More</a>
+
+            <!-- Image -->
+            <% if (blog.coverImageURL) { %>
+              <div class="col-md-4 p-3">
+                <div class="blog-card-img-wrap">
+                  <img src="<%= blog.coverImageURL %>" class="blog-card-img rounded" alt="<%= blog.title %>">
+                </div>
+              </div>
             <% } %>
+
           </div>
         </div>
       </div>
+
     <% }) %>
   </div>
+
+  <!-- Empty State -->
+  <% if (!blogs || blogs.length === 0) { %>
+    <div class="text-center py-5" style="color: var(--ink-muted);">
+      <div style="font-size:2.5rem; margin-bottom:1rem;">✦</div>
+      <p style="font-family:'Playfair Display',serif; font-size:1.3rem; font-style:italic;">No stories yet. Be the first to write one.</p>
+      <a href="/blog/add-new" class="btn btn-dark mt-3">Start Writing</a>
+    </div>
+  <% } %>
+
 </div>
+
+<style>
+  .read-more-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    transition: gap 0.2s ease, color 0.2s ease;
+  }
+
+  .read-more-link:hover { color: var(--ink); gap: 4px; }
+  .read-more-link:hover svg { transform: translateX(3px); }
+</style>

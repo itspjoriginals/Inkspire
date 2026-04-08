@@ -4,44 +4,100 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <%- include('./partials/head') %>
-  <title>Signup</title>
+  <title>Create Account — TechThreads</title>
 </head>
-<body>
+<body style="display:flex; flex-direction:column; min-height:100vh;">
+
   <%- include('./partials/navbar') %>
-<div class="container mt-4 pt-4">
-  <form class="row g-3" action="/user/signup" method="post">
-    <div class="col-md-12">
-      <label for="fullName" class="form-label">Full Name</label>
-      <input type="text" 
-      name="fullName"
-      class="form-control" id="fullName" placeholder="Enter your full name" required>
-    </div>
-    <div class="col-md-6">
-      <label for="inputEmail" class="form-label">Email</label>
-      <input type="email" 
-      name="email"
-      class="form-control" id="inputEmail" placeholder="Enter your email" required>
-    </div>
-    <div class="col-md-6">
-      <label for="password" class="form-label">Password</label>
-      <input type="password" 
-      name="password"
-      class="form-control" id="password" placeholder="Create a password" required>
-    </div>
-    <div class="col-12">
-      <div class="form-check">
-        <input class="form-check-input" type="checkbox" id="agreeTerms" required>
-        <label class="form-check-label" for="agreeTerms">
-          I agree to the Terms and Conditions
-        </label>
+
+  <div class="container d-flex align-items-center justify-content-center flex-grow-1 py-5">
+    <div style="width:100%; max-width:480px;">
+
+      <div class="auth-card fade-up">
+
+        <div class="mb-4">
+          <p class="auth-subtitle">Join the community</p>
+          <h2 class="auth-title">Create your account</h2>
+        </div>
+
+        <% if (locals.error) { %>
+          <div class="alert alert-danger mb-4"><%= locals.error %></div>
+        <% } %>
+
+        <form action="/user/signup" method="post">
+
+          <div class="mb-3">
+            <label for="fullName" class="form-label">Full Name</label>
+            <input
+              type="text"
+              name="fullName"
+              class="form-control"
+              id="fullName"
+              placeholder="Jane Doe"
+              autocomplete="name"
+              required
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="inputEmail" class="form-label">Email address</label>
+            <input
+              type="email"
+              name="email"
+              class="form-control"
+              id="inputEmail"
+              placeholder="you@example.com"
+              autocomplete="email"
+              required
+            >
+          </div>
+
+          <div class="mb-4">
+            <label for="password" class="form-label">Password</label>
+            <input
+              type="password"
+              name="password"
+              class="form-control"
+              id="password"
+              placeholder="Create a strong password"
+              autocomplete="new-password"
+              required
+            >
+          </div>
+
+          <div class="mb-4">
+            <label style="display:flex; align-items:flex-start; gap:0.65rem; cursor:pointer;">
+              <input type="checkbox" id="agreeTerms" required style="margin-top:3px; accent-color:var(--gold); width:15px; height:15px; flex-shrink:0;">
+              <span style="font-size:0.82rem; color:var(--ink-muted); line-height:1.5;">
+                I agree to the <a href="#" style="color:var(--gold);">Terms of Service</a> and <a href="#" style="color:var(--gold);">Privacy Policy</a>
+              </span>
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-write w-100" style="padding:0.75rem;">
+            Create Account ✦
+          </button>
+
+        </form>
+
+        <div class="ornament-divider" style="margin: 1.5rem 0;"><span style="font-size:0.7rem; color:var(--ink-muted);">or</span></div>
+
+        <p style="text-align:center; font-size:0.85rem; color:var(--ink-muted); margin:0;">
+          Already have an account?
+          <a href="/user/signin" style="color:var(--gold); font-weight:500;">Sign in →</a>
+        </p>
+
       </div>
+
     </div>
-    <div class="col-12">
-      <button type="submit" class="btn btn-primary">Sign Up</button>
+  </div>
+
+  <footer class="page-footer">
+    <div class="container">
+      <span>© <%= new Date().getFullYear() %> TechThreads</span>
     </div>
-  </form>
-</div>
-  
+  </footer>
+
   <%- include('./partials/scripts') %>
 </body>
 </html>
